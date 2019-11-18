@@ -3,7 +3,6 @@ package com.example.springbootswagger2.controller;
 import com.example.springbootswagger2.model.Database;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,35 +22,34 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@Api(value = "Swagger2DemoRestController", description = "REST Apis related to Student Entity!!!!")
+@Api(value = "Swagger2DemoRestController", description = "REST Apis related to entity user")
 @RestController
 public class Swagger2DemoRestController {
 
     Database db = new Database();
 
-    @ApiOperation(value = "Get list of Students in the System ", response = Iterable.class, tags = "getStudents")
+    @ApiOperation(value = "Get users ", response = Iterable.class )
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Suceess|OK"),
         @ApiResponse(code = 401, message = "not authorized!"),
         @ApiResponse(code = 403, message = "forbidden!!!"),
         @ApiResponse(code = 404, message = "not found!!!")})
-
-    @RequestMapping(value = "/getUsers")
+    @GetMapping("/getUsers")
     public String getUsers() {
         List<User> users = new ArrayList();
         users=db.getData();
         return users.toString();
     }
     
-    @ApiOperation(value = "Add an employee")
+    @ApiOperation(value = "Add an user")
     @PostMapping("/users")
     public void createUser(
-        @ApiParam(value = "Employee object store in database table", required = true) @Valid @RequestBody User  user) {
+        @ApiParam(value = "User object store in database table", required = true) @Valid @RequestBody User  user) {
         db.save(user);
     }
     
     
-     @ApiOperation(value = "Delete a product")
+     @ApiOperation(value = "Delete a user")
     @RequestMapping(value="/delete/{id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity delete(@PathVariable int id){
         db.delete(id);

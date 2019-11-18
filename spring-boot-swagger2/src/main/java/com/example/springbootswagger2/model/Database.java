@@ -5,12 +5,16 @@
  */
 package com.example.springbootswagger2.model;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  *
@@ -28,18 +32,35 @@ public class Database {
     String s7;
     String s8;
     
+    
+      public Connection createConnection() throws SQLException, ClassNotFoundException, FileNotFoundException, IOException {
+        Connection connection;
+        Properties properties = new Properties();
+        properties.load(new java.io.FileInputStream("C://Users//stefan.tomasik//Documents//NetBeansProjects//spring-boot-swagger2//spring-boot-swagger2//src//main//resources//application.properties"));
+        String url = properties.getProperty("host");
+        String user = properties.getProperty("username");;
+        String password = properties.getProperty("password");
+        String driver = properties.getProperty("driver");
+        Class.forName(driver);
+
+        connection = DriverManager.getConnection(url, user, password);
+        return connection;
+    }
+    
     public List getData() {
-        Connection c = null;
+        Connection connection = null;
         Statement stmt = null;
         try {
-            Class.forName("org.postgresql.Driver");
-            c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/uzivatel",
-                            "postgres", "postgres");
-            c.setAutoCommit(false);
+           // Class.forName("org.postgresql.Driver");
+            //connection = DriverManager
+                   // .getConnection("jdbc:postgresql://localhost:5432/uzivatel",
+                      ///      "postgres", "postgres");
+                      
+            connection =  createConnection();      
+            connection.setAutoCommit(false);
             System.out.println("Opened database successfully");
 
-            stmt = c.createStatement();
+            stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM uzivatel;");
             while (rs.next()) {
 
@@ -56,7 +77,7 @@ public class Database {
             users.add(u);
             rs.close();
             stmt.close();
-            c.close();
+            connection.close();
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
@@ -66,24 +87,26 @@ public class Database {
     }
 
     public void save(User user) {
-        Connection c = null;
+        Connection connection = null;
         Statement stmt = null;
         try {
-            Class.forName("org.postgresql.Driver");
-            c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/uzivatel",
-                            "postgres", "postgres");
-            c.setAutoCommit(false);
+           // Class.forName("org.postgresql.Driver");
+           // connection = DriverManager
+            //        .getConnection("jdbc:postgresql://localhost:5432/uzivatel",
+            //                "postgres", "postgres");
+            
+            connection =  createConnection();  
+            connection.setAutoCommit(false);
             System.out.println("Opened database successfully");
-            stmt = c.createStatement();
+            stmt = connection.createStatement();
             String sql = "INSERT INTO Uzivatel(meno,priezvisko,adresa,kontakt,rola,login,heslo)"
                     + "VALUES('Jana', 'Kissova','RV','xyz','admin'+ 'jana'+ 'jana')";
 
             stmt.executeUpdate(sql);
 
             stmt.close();
-            c.commit();
-            c.close();
+            connection.commit();
+            connection.close();
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
@@ -92,23 +115,25 @@ public class Database {
     }
 
     public void delete(int id) {
-        Connection c = null;
+        Connection connection = null;
         Statement stmt = null;
         try {
-            Class.forName("org.postgresql.Driver");
-            c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/uzivatel",
-                            "postgres", "postgres");
-            c.setAutoCommit(false);
+            //Class.forName("org.postgresql.Driver");
+          //  connection = DriverManager
+             //       .getConnection("jdbc:postgresql://localhost:5432/uzivatel",
+                  ///          "postgres", "postgres");
+                  
+            connection =  createConnection();        
+            connection.setAutoCommit(false);
             System.out.println("Opened database successfully");
 
-            stmt = c.createStatement();
+            stmt = connection.createStatement();
             String sql = "DELETE from Uzivatel where id=" + id + ";";
             stmt.executeUpdate(sql);
-            c.commit();
+            connection.commit();
 
             stmt.close();
-            c.close();
+            connection.close();
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
